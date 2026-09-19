@@ -34,4 +34,5 @@ jobs:
       with:
         name: Gimi-AI-App
         path: bin/*.apk
+
         
