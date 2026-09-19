@@ -1,4 +1,3 @@
-.github/workflows/build.yml
 name: Build Gimi APK
 
 on:
@@ -8,21 +7,31 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    - name: Build APK with Buildozer
-      uses: ArtemSBulgakov/buildozer-action@v1
-      id: buildozer
+    - name: Set up Python
+      uses: actions/setup-python@v5
       with:
-        command: buildozer android debug
-        buildozer_version: stable
+        python-version: '3.10'
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev libssl-dev openssl libffi-dev zlib1g-dev liballoc-stdio-clike-0.4-dev libreadline-dev libtk8.6 libgdbm-dev libncurses5-dev libncursesw5-dev libdb5.3-dev pack200 unzip openjdk-17-jdk git ffmpeg libsdl2-dev libsdl2-image-dev libsdl2-mixin-dev libsdl2-ttf-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev zlib1g-dev libgstreamer1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good
+        pip install --upgrade pip
+        pip install buildozer cython==0.29.33
+
+    - name: Build APK with Buildozer
+      run: |
+        buildozer android debug
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
         name: Gimi-AI-App
-        path: ${{ steps.buildozer.outputs.filename }}
+        path: bin/*.apk
+        
