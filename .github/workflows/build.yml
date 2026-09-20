@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
 
     steps:
     - name: Checkout Code
@@ -16,16 +16,16 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.10'
+        python-version: '3.9'
 
-    - name: Install System Dependencies
+    - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential ccache git libffi-dev libssl-dev libltdl-dev python3-dev python3-pip openjdk-17-jdk unzip zip
-        pip install --upgrade pip setuptools
-        pip install "cython<3.0.0" buildozer
+        sudo apt-get install -y build-essential ccache git libffi-dev libssl-dev libltdl-dev python3-dev openjdk-17-jdk unzip zip
+        pip install --upgrade pip
+        pip install "cython<3.0.0" "buildozer==1.5.0"
 
-    - name: Auto Generate buildozer.spec & Build APK
+    - name: Build APK
       run: |
         cat << 'EOF' > buildozer.spec
         [app]
@@ -35,7 +35,7 @@ jobs:
         source.dir = .
         source.include_exts = py,png,jpg,kv,atlas
         version = 0.1
-        requirements = python3,kivy==2.3.0,google-genai,requests,urllib3,certifi
+        requirements = python3,kivy==2.2.1,google-genai,requests,urllib3,certifi
         orientation = portrait
         fullscreen = 0
         android.permissions = INTERNET,RECORD_AUDIO
@@ -43,12 +43,10 @@ jobs:
         android.minapi = 21
         android.archs = arm64-v8a
         android.accept_sdk_license = True
-        p4a.branch = master
+        p4a.branch = v2024.01.21
         EOF
 
-        # Clean previous cache and build
-        buildozer distclean
-        yes | buildozer android debug
+        buildozer android debug
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
