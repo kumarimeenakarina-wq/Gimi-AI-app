@@ -42,9 +42,11 @@ jobs:
         android.api = 33
         android.minapi = 21
         android.archs = arm64-v8a
+        android.accept_sdk_license = True
         EOF
 
-        buildozer android debug
+        # Automatically accept SDK licenses and install build-tools
+        yes | buildozer android debug
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
