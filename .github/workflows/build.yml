@@ -46,6 +46,8 @@ jobs:
         p4a.branch = master
         EOF
 
+        # Clean previous cache and build
+        buildozer distclean
         yes | buildozer android debug
 
     - name: Upload APK Artifact
